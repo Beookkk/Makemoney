@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Play & Win India</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    background:
+        radial-gradient(circle at 50% -10%, #293b85, transparent 45%),
+        linear-gradient(135deg, #080b18, #111936 55%, #080b18);
+    min-height: 100vh;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.container {
+    width: 92%;
+    max-width: 1150px;
+    margin: auto;
+}
+
+/* HEADER */
+
+header {
+    padding: 22px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 900;
+}
+
+.logo span {
+    color: #ffd43b;
+}
+
+.age-badge {
+    padding: 8px 14px;
+    border-radius: 30px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    font-size: 13px;
+}
+
+/* HERO */
+
+.hero {
+    text-align: center;
+    padding: 45px 0 30px;
+}
+
+.game-logo {
+    width: 105px;
+    height: 105px;
+    margin: auto;
+    border-radius: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 55px;
+
+    background:
+        linear-gradient(145deg, #ffd43b, #ff8c00);
+
+    box-shadow:
+        0 20px 60px rgba(255,170,0,.25);
+}
+
+.hero h1 {
+    margin-top: 25px;
+    font-size: clamp(40px, 7vw, 70px);
+}
+
+.hero h1 span {
+    color: #ffd43b;
+}
+
+.hero p {
+    max-width: 650px;
+    margin: 15px auto;
+    line-height: 1.7;
+    color: #b9c1df;
+}
+
+/* CARD */
+
+.card {
+    max-width: 520px;
+    margin: 25px auto 60px;
+
+    padding: 30px;
+
+    border-radius: 25px;
+
+    background: rgba(255,255,255,.075);
+    border: 1px solid rgba(255,255,255,.13);
+
+    backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.25);
+}
+
+.card h2 {
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #aeb7d5;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 22px;
+}
+
+/* INPUTS */
+
+.input-group {
+    margin-bottom: 17px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #d7dcf0;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+
+    background: rgba(0,0,0,.25);
+    color: white;
+
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 13px;
+
+    outline: none;
+    font-size: 16px;
+}
+
+input:focus {
+    border-color: #ffd43b;
+}
+
+/* LOCATION */
+
+.location-box {
+    padding: 19px;
+    border-radius: 17px;
+
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
+
+    margin: 20px 0;
+}
+
+.location-title {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    font-weight: bold;
+}
+
+.location-description {
+    color: #aeb7d5;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 10px;
+}
+
+.location-status {
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+.location-status.success {
+    color: #51cf66;
+}
+
+.location-status.error {
+    color: #ff6b6b;
+}
+
+.location-status.loading {
+    color: #ffd43b;
+}
+
+/* BUTTONS */
+
+.btn {
+    width: 100%;
+    padding: 15px;
+
+    border: none;
+    border-radius: 13px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    transition: .2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.location-btn {
+    margin-top: 15px;
+    background: #287cff;
+    color: white;
+}
+
+.continue-btn {
+    background: linear-gradient(135deg,#ffd43b,#ff9800);
+    color: #17120a;
+}
+
+.btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.warning {
+    color: #ff6b6b;
+    font-size: 13px;
+    margin-top: 7px;
+}
+
+/* GAMES */
+
+.games-page {
+    padding-bottom: 70px;
+}
+
+.welcome {
+    text-align: center;
+    padding: 35px 0;
+}
+
+.welcome h1 {
+    font-size: clamp(30px,5vw,45px);
+}
+
+.welcome span {
+    color: #ffd43b;
+}
+
+.welcome p {
+    color: #aeb7d5;
+    margin-top: 10px;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+    gap: 20px;
+}
+
+.game-card {
+    padding: 26px;
+
+    border-radius: 23px;
+
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+
+    transition: .25s;
+}
+
+.game-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255,212,59,.5);
+}
+
+.game-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+.game-card h3 {
+    font-size: 21px;
+}
+
+.game-card p {
+    color: #aeb7d5;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 10px 0 20px;
+}
+
+.play-btn {
+    background: #ffd43b;
+    color: #16120a;
+}
+
+/* GAME SCREEN */
+
+.game-screen {
+    padding: 35px 0 70px;
+    text-align: center;
+}
+
+.back-btn {
+    width: auto;
+    background: rgba(255,255,255,.08);
+    color: white;
+    padding: 10px 18px;
+    margin-bottom: 25px;
+}
+
+.game-screen h1 {
+    font-size: 40px;
+}
+
+.game-description {
+    color: #aeb7d5;
+    margin: 10px 0;
+}
+
+/* WHEEL */
+
+.wheel-container {
+    position: relative;
+
+    width: 320px;
+    height: 320px;
+
+    margin: 35px auto;
+}
+
+.wheel {
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+
+    border: 12px solid white;
+
+    background:
+        conic-gradient(
+            #ff4d6d 0deg 45deg,
+            #ffd43b 45deg 90deg,
+            #4dabf7 90deg 135deg,
+            #51cf66 135deg 180deg,
+            #845ef7 180deg 225deg,
+            #ff922b 225deg 270deg,
+            #20c997 270deg 315deg,
+            #f06595 315deg 360deg
+        );
+
+    transition:
+        transform 4s cubic-bezier(.12,.8,.2,1);
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.4);
+}
+
+.pointer {
+    position: absolute;
+
+    top: -20px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 5;
+
+    font-size: 38px;
+}
+
+.wheel-text {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.wheel-text span {
+    position: absolute;
+    font-weight: 900;
+    font-size: 12px;
+}
+
+.w1 { top: 25px; left: 135px; }
+.w2 { top: 65px; right: 30px; }
+.w3 { top: 145px; right: 15px; }
+.w4 { bottom: 65px; right: 30px; }
+.w5 { bottom: 25px; left: 135px; }
+.w6 { bottom: 65px; left: 30px; }
+.w7 { top: 145px; left: 15px; }
+.w8 { top: 65px; left: 30px; }
+
+/* RESULT */
+
+.result {
+    max-width: 500px;
+    margin: 25px auto;
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    background: rgba(255,212,59,.1);
+
+    border: 1px solid rgba(255,212,59,.25);
+}
+
+.result h2 {
+    color: #ffd43b;
+    margin-bottom: 8px;
+}
+
+/* CARDS */
+
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+
+    margin: 35px 0;
+}
+
+.lucky-card {
+    width: 115px;
+    height: 165px;
+
+    border-radius: 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 42px;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(145deg,#3f51b5,#18224b);
+
+    border: 2px solid rgba(255,255,255,.15);
+
+    transition: .25s;
+}
+
+.lucky-card:hover {
+    transform: translateY(-8px);
+}
+
+.card-revealed {
+    background: #ffd43b;
+    color: #17120a;
+}
+
+/* NUMBER */
+
+.number-area {
+    max-width: 450px;
+    margin: 30px auto;
+}
+
+.number-display {
+    font-size: 80px;
+    font-weight: 900;
+    margin: 25px;
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+    padding: 25px;
+
+    color: #737b9d;
+
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+@media(max-width:600px) {
+
+    .card {
+        padding: 22px;
+    }
+
+    .wheel-container {
+        width: 285px;
+        height: 285px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="container">
+
+    <div class="logo">
+        PLAY<span>&</span>WIN 🇮🇳
+    </div>
+
+    <div class="age-badge">
+        18+ ONLY
+    </div>
+
+</header>
+
+
+<!-- ============================= -->
+<!-- VERIFICATION PAGE -->
+<!-- ============================= -->
+
+<section
+    id="verificationPage"
+    class="container"
+>
+
+    <div class="hero">
+
+        <div class="game-logo">
+            🎮
+        </div>
+
+        <h1>
+            PLAY <span>& WIN</span>
+        </h1>
+
+        <p>
+            Welcome to Play & Win India.
+            Complete the verification below to enter
+            the games area.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            👤 Player Verification
+        </h2>
+
+        <p class="subtitle">
+
+            Enter your name and age.
+            Players must be 18 or older.
+
+        </p>
+
+
+        <div class="input-group">
+
+            <label>
+                Your Name
+            </label>
+
+            <input
+                id="playerName"
+                type="text"
+                maxlength="60"
+                placeholder="Enter your name"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                Your Age
+            </label>
+
+            <input
+                id="playerAge"
+                type="number"
+                min="1"
+                max="120"
+                placeholder="Enter your age"
+            >
+
+            <div
+                id="ageWarning"
+                class="warning"
+            ></div>
+
+        </div>
+
+
+        <div class="location-box">
+
+            <div class="location-title">
+
+                <span>📍</span>
+
+                <span>
+                    Location Verification
+                </span>
+
+            </div>
+
+
+            <div class="location-description">
+
+                This game is intended for users
+                currently located in India.
+
+                <br><br>
+
+                Click the button below to request
+                your browser's location permission.
+
+                Your location is collected only
+                after you choose <b>Allow</b>.
+
+                <br><br>
+
+                <b>
+                    Location does not prove citizenship.
+                </b>
+
+            </div>
+
+
+            <button
+                id="locationButton"
+                class="btn location-btn"
+                onclick="requestLocation()"
+            >
+                📍 GRANT LOCATION PERMISSION
+            </button>
+
+
+            <div
+                id="locationStatus"
+                class="location-status"
+            >
+                Location not verified
+            </div>
+
+        </div>
+
+
+        <button
+            id="enterButton"
+            class="btn continue-btn"
+            onclick="verifyPlayer()"
+        >
+            ENTER PLAY & WIN →
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- GAMES PAGE -->
+<!-- ============================= -->
+
+<section
+    id="gamesPage"
+    class="container games-page hidden"
+>
+
+    <div class="welcome">
+
+        <h1>
+            Welcome,
+            <span id="welcomeName"></span> 👋
+        </h1>
+
+        <p>
+            Choose your game and have fun.
+        </p>
+
+    </div>
+
+
+    <div class="games-grid">
+
+
+        <!-- GAME 1 -->
+
+        <div class="game-card">
+
+            <div class="game-icon">
+                🎡
+            </div>
+
+            <h3>
+                Spin & Win
+            </h3>
+
+            <p>
+                Spin the colorful wheel and
+                discover your result.
+            </p>
+
+            <button
+                class="btn play-btn"
+                onclick="openGame('wheelGame')"
+            >
+                PLAY NOW
+            </button>
+
+        </div>
+
+
+        <!-- GAME 2 -->
+
+        <div class="game-card">
+
+            <div class="game-icon">
+                🃏
+            </div>
+
+            <h3>
+                Lucky Card
+            </h3>
+
+            <p>
+                Pick one card and reveal
+                your surprise.
+            </p>
+
+            <button
+                class="btn play-btn"
+                onclick="openGame('cardGame')"
+            >
+                PLAY NOW
+            </button>
+
+        </div>
+
+
+        <!-- GAME 3 -->
+
+        <div class="game-card">
+
+            <div class="game-icon">
+                🔢
+            </div>
+
+            <h3>
+                Lucky Number
+            </h3>
+
+            <p>
+                Choose a number from 1 to 9
+                and test your luck.
+            </p>
+
+            <button
+                class="btn play-btn"
+                onclick="openGame('numberGame')"
+            >
+                PLAY NOW
+            </button>
+
+        </div>
+
+
+        <!-- GAME 4 -->
+
+        <div class="game-card">
+
+            <div class="game-icon">
+                🎁
+            </div>
+
+            <h3>
+                Mystery Box
+            </h3>
+
+            <p>
+                Pick a mystery box and
+                reveal what's inside.
+            </p>
+
+            <button
+                class="btn play-btn"
+                onclick="openGame('boxGame')"
+            >
+                PLAY NOW
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- SPIN GAME -->
+<!-- ============================= -->
+
+<section
+    id="wheelGame"
+    class="container game-screen hidden"
+>
+
+    <button
+        class="btn back-btn"
+        onclick="backToGames()"
+    >
+        ← BACK
+    </button>
+
+    <h1>
+        🎡 Spin & Win
+    </h1>
+
+    <p class="game-description">
+        Give the wheel a spin!
+    </p>
+
+
+    <div class="wheel-container">
+
+        <div class="pointer">
+            ▼
+        </div>
+
+        <div
+            id="wheel"
+            class="wheel"
+        ></div>
+
+
+        <div class="wheel-text">
+
+            <span class="w1">BONUS</span>
+            <span class="w2">LUCKY</span>
+            <span class="w3">WOW</span>
+            <span class="w4">STAR</span>
+            <span class="w5">FUN</span>
+            <span class="w6">LUCK</span>
+            <span class="w7">PLAY</span>
+            <span class="w8">GREAT</span>
+
+        </div>
+
+    </div>
+
+
+    <button
+        id="spinButton"
+        class="btn continue-btn"
+        style="max-width:350px"
+        onclick="spinWheel()"
+    >
+        🎡 SPIN NOW
+    </button>
+
+
+    <div
+        id="wheelResult"
+        class="result hidden"
+    >
+
+        <h2>
+            🎉 Result
+        </h2>
+
+        <p id="wheelResultText"></p>
+
+    </div>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- CARD GAME -->
+<!-- ============================= -->
+
+<section
+    id="cardGame"
+    class="container game-screen hidden"
+>
+
+    <button
+        class="btn back-btn"
+        onclick="backToGames()"
+    >
+        ← BACK
+    </button>
+
+    <h1>
+        🃏 Lucky Card
+    </h1>
+
+    <p class="game-description">
+        Choose one card.
+    </p>
+
+
+    <div class="cards">
+
+        <div
+            class="lucky-card"
+            onclick="chooseCard(this)"
+        >
+            ?
+        </div>
+
+        <div
+            class="lucky-card"
+            onclick="chooseCard(this)"
+        >
+            ?
+        </div>
+
+        <div
+            class="lucky-card"
+            onclick="chooseCard(this)"
+        >
+            ?
+        </div>
+
+        <div
+            class="lucky-card"
+            onclick="chooseCard(this)"
+        >
+            ?
+        </div>
+
+    </div>
+
+
+    <div
+        id="cardResult"
+        class="result hidden"
+    >
+
+        <h2>
+            🃏 Result
+        </h2>
+
+        <p id="cardResultText"></p>
+
+    </div>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- NUMBER GAME -->
+<!-- ============================= -->
+
+<section
+    id="numberGame"
+    class="container game-screen hidden"
+>
+
+    <button
+        class="btn back-btn"
+        onclick="backToGames()"
+    >
+        ← BACK
+    </button>
+
+    <h1>
+        🔢 Lucky Number
+    </h1>
+
+    <p class="game-description">
+        Pick a number between 1 and 9.
+    </p>
+
+
+    <div class="number-area">
+
+        <input
+            id="numberInput"
+            type="number"
+            min="1"
+            max="9"
+            placeholder="Enter 1 - 9"
+        >
+
+
+        <div
+            id="numberDisplay"
+            class="number-display"
+        >
+            ?
+        </div>
+
+
+        <button
+            class="btn continue-btn"
+            onclick="playNumber()"
+        >
+            ✨ TEST MY LUCK
+        </button>
+
+    </div>
+
+
+    <div
+        id="numberResult"
+        class="result hidden"
+    >
+
+        <h2>
+            🎯 Result
+        </h2>
+
+        <p id="numberResultText"></p>
+
+    </div>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- MYSTERY BOX -->
+<!-- ============================= -->
+
+<section
+    id="boxGame"
+    class="container game-screen hidden"
+>
+
+    <button
+        class="btn back-btn"
+        onclick="backToGames()"
+    >
+        ← BACK
+    </button>
+
+    <h1>
+        🎁 Mystery Box
+    </h1>
+
+    <p class="game-description">
+        Pick one mystery box.
+    </p>
+
+
+    <div class="cards">
+
+        <div
+            class="lucky-card"
+            onclick="openBox(this)"
+        >
+            🎁
+        </div>
+
+        <div
+            class="lucky-card"
+            onclick="openBox(this)"
+        >
+            🎁
+        </div>
+
+        <div
+            class="lucky-card"
+            onclick="openBox(this)"
+        >
+            🎁
+        </div>
+
+    </div>
+
+
+    <div
+        id="boxResult"
+        class="result hidden"
+    >
+
+        <h2>
+            🎁 Mystery Result
+        </h2>
+
+        <p id="boxResultText"></p>
+
+    </div>
+
+</section>
+
+
+<footer>
+
+    © 2026 Play & Win India
+
+    <br>
+
+    18+ only.
+
+    <br>
+
+    Location is requested only with user permission.
+
+    <br>
+
+    Location verification indicates current device
+    location and does not establish citizenship.
+
+</footer>
+
+
+<script>
+
+/* ================================================= */
+/* SUPABASE CONFIGURATION */
+/* ================================================= */
+
+/*
+   IMPORTANT:
+
+   Replace these two values with your own
+   Supabase Project URL and Publishable Key.
+
+   NEVER put your Supabase service-role/secret key here.
+*/
+
+const SUPABASE_URL =
+    "https://pdngpsmqkrcpizbxdypc.supabase.co/";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_eL8bYql00zA_N0EgGBeBeg_njP8Qzqj";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* ================================================= */
+/* PLAYER DATA */
+/* ================================================= */
+
+let player = {
+
+    name: "",
+
+    age: null,
+
+    latitude: null,
+
+    longitude: null,
+
+    locationGranted: false
+
+};
+
+
+/* ================================================= */
+/* LOCATION */
+/* ================================================= */
+
+function requestLocation() {
+
+    const status =
+        document.getElementById(
+            "locationStatus"
+        );
+
+    const button =
+        document.getElementById(
+            "locationButton"
+        );
+
+
+    if (!navigator.geolocation) {
+
+        status.innerText =
+            "❌ Your browser does not support location.";
+
+        status.className =
+            "location-status error";
+
+        return;
+
+    }
+
+
+    status.innerText =
+        "⏳ Requesting location permission...";
+
+    status.className =
+        "location-status loading";
+
+
+    button.disabled = true;
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            player.latitude =
+                position.coords.latitude;
+
+            player.longitude =
+                position.coords.longitude;
+
+            player.accuracy =
+                position.coords.accuracy;
+
+            player.locationGranted =
+              true;
+
+
+            status.innerText =
+                "✅ Location permission granted.";
+
+            status.className =
+                "location-status success";
+
+
+            button.innerText =
+                "✅ LOCATION VERIFIED";
+
+
+            button.style.background =
+                "#20c997";
+
+
+            button.disabled = false;
+
+        },
+
+        function(error) {
+
+            player.locationGranted =
+                false;
+
+
+            button.disabled = false;
+
+            button.innerText =
+                "📍 GRANT LOCATION PERMISSION";
+
+
+            status.className =
+                "location-status error";
+
+
+            if (error.code === 1) {
+
+                status.innerText =
+                    "⚠️ Location permission is mandatory to play. Please allow location access and try again.";
+
+
+            } else if (error.code === 2) {
+
+                status.innerText =
+                    "❌ Your location could not be determined.";
+
+            } else if (error.code === 3) {
+
+            status.innerText =
+                "❌ Location request timed out. Please try again.";
+
+
+            } else {
+
+                status.innerText =
+                    "❌ Location request timed out.";
+
+            }
+
+        },
+
+        {
+
+            enableHighAccuracy: true,
+
+            timeout: 30000,
+
+            maximumAge: 0
+        }
+
+    );
+
+}
+
+
+/* ================================================= */
+/* BASIC INDIA COORDINATE CHECK */
+/* ================================================= */
+
+/*
+   This is only a rough client-side eligibility check.
+   It is NOT a secure citizenship verification system.
+*/
+
+function appearsToBeInIndia(latitude, longitude) {
+
+    return (
+
+        latitude >= 6 &&
+        latitude <= 37.5 &&
+
+        longitude >= 68 &&
+        longitude <= 97.5
+
+    );
+
+}
+
+
+/* ================================================= */
+/* PLAYER VERIFICATION */
+/* ================================================= */
+
+async function verifyPlayer() {
+
+    const name =
+        document
+            .getElementById("playerName")
+            .value
+            .trim();
+
+
+    const age =
+        Number(
+            document
+                .getElementById("playerAge")
+                .value
+        );
+
+
+    const warning =
+        document.getElementById(
+            "ageWarning"
+        );
+
+
+    warning.innerText = "";
+
+
+    if (!name) {
+
+        alert(
+            "Please enter your name."
+        );
+
+        return;
+
+    }
+
+
+    if (!age) {
+
+        alert(
+            "Please enter your age."
+        );
+
+        return;
+
+    }
+
+
+    if (age < 18) {
+
+        warning.innerText =
+            "Sorry. You must be 18 or older to play.";
+
+        return;
+
+    }
+
+
+    if (age > 120) {
+
+        warning.innerText =
+            "Please enter a valid age.";
+
+        return;
+
+    }
+
+
+    if (!player.locationGranted) {
+
+        alert(
+            "Please grant location permission first."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        player.latitude === null ||
+        player.longitude === null
+    ) {
+
+        alert(
+            "Location information is unavailable."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !appearsToBeInIndia(
+            player.latitude,
+            player.longitude
+        )
+    ) {
+
+        alert(
+            "This game is currently available only to users whose device location appears to be in India."
+        );
+
+        return;
+
+    }
+
+
+    player.name =
+        name;
+
+    player.age =
+        age;
+
+
+    const enterButton =
+        document.getElementById(
+            "enterButton"
+        );
+
+
+    enterButton.disabled =
+        true;
+
+    enterButton.innerText =
+        "VERIFYING...";
+
+
+    /*
+       Save player record.
+
+       The database RLS policy must allow
+       anonymous INSERT only when:
+       age >= 18
+       location_granted = true
+    */
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("players")
+            .insert({
+
+                name:
+                    player.name,
+
+                age:
+                    player.age,
+
+                latitude:
+                    player.latitude,
+
+                longitude:
+                    player.longitude,
+                    
+                accuracy: 
+                    player.accuracy,
+
+                location_granted:
+                    true
+
+            });
+
+
+    if (error) {
+
+        console.error(error);
+
+
+        enterButton.disabled =
+            false;
+
+        enterButton.innerText =
+            "ENTER PLAY & WIN →";
+
+
+        alert(
+            "Verification could not be completed. Please try again."
+        );
+
+        return;
+
+    }
+
+
+    enterButton.disabled =
+        false;
+
+
+    enterButton.innerText =
+        "ENTER PLAY & WIN →";
+
+
+    document
+        .getElementById(
+            "verificationPage"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "gamesPage"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "welcomeName"
+        )
+        .innerText =
+            player.name;
+
+}
+
+
+/* ================================================= */
+/* GAME NAVIGATION */
+/* ================================================= */
+
+function openGame(gameId) {
+
+    document
+        .getElementById(
+            "gamesPage"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    document
+        .querySelectorAll(
+            ".game-screen"
+        )
+        .forEach(
+            function(screen) {
+
+                screen.classList.add(
+                    "hidden"
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            gameId
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+}
+
+
+function backToGames() {
+
+    document
+        .querySelectorAll(
+            ".game-screen"
+        )
+        .forEach(
+            function(screen) {
+
+                screen.classList.add(
+                    "hidden"
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "gamesPage"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+}
+
+
+/* ================================================= */
+/* SPIN WHEEL */
+/* ================================================= */
+
+let wheelRotation = 0;
+
+let spinning = false;
+
+
+function spinWheel() {
+
+    if (spinning) {
+
+        return;
+
+    }
+
+
+    spinning = true;
+
+
+    const wheel =
+        document.getElementById(
+            "wheel"
+        );
+
+
+    const button =
+        document.getElementById(
+            "spinButton"
+        );
+
+
+    button.disabled =
+        true;
+
+    button.innerText =
+        "🎡 SPINNING...";
+
+
+    const extra =
+        1440 +
+        Math.floor(
+            Math.random() * 360
+        );
+
+
+    wheelRotation +=
+        extra;
+
+
+    wheel.style.transform =
+        `rotate(${wheelRotation}deg)`;
+
+
+    setTimeout(
+
+        function() {
+
+            const results = [
+
+                "⭐ Amazing!",
+
+                "🍀 Lucky!",
+
+                "🎉 Fantastic!",
+
+                "✨ Great Spin!",
+
+                "🔥 Awesome!",
+
+                "💫 Wonderful!",
+
+                "🎁 Surprise!",
+
+                "🏆 Superstar!"
+
+            ];
+
+
+            const result =
+                results[
+                    Math.floor(
+                        Math.random() *
+                        results.length
+                    )
+                ];
+
+
+            document
+                .getElementById(
+                    "wheelResult"
+                )
+                .classList.remove(
+                    "hidden"
+                );
+
+
+            document
+                .getElementById(
+                    "wheelResultText"
+                )
+                .innerText =
+                    `${result} Nice spin, ${player.name}!`;
+
+
+            button.disabled =
+                false;
+
+            button.innerText =
+                "🎡 SPIN AGAIN";
+
+
+            spinning =
+                false;
+
+        },
+
+        4200
+
+    );
+
+}
+
+
+/* ================================================= */
+/* LUCKY CARD */
+/* ================================================= */
+
+function chooseCard(card) {
+
+    const cards =
+        document.querySelectorAll(
+            ".lucky-card"
+        );
+
+
+    cards.forEach(
+        function(c) {
+
+            c.style.pointerEvents =
+                "none";
+
+        }
+    );
+
+
+    const results = [
+
+        "⭐ Lucky Star!",
+
+        "🍀 Very Lucky!",
+
+        "🎉 Great Choice!",
+
+        "💫 Amazing!"
+
+    ];
+
+
+    const result =
+        results[
+            Math.floor(
+                Math.random() *
+                results.length
+            )
+        ];
+
+
+    card.classList.add(
+        "card-revealed"
+    );
+
+
+    card.innerText =
+        "⭐";
+
+
+    document
+        .getElementById(
+            "cardResult"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "cardResultText"
+        )
+        .innerText =
+            `${result} Nice choice, ${player.name}!`;
+
+}
+
+
+/* ================================================= */
+/* LUCKY NUMBER */
+/* ================================================= */
+
+function playNumber() {
+
+    const chosen =
+        Number(
+            document
+                .getElementById(
+                    "numberInput"
+                )
+                .value
+        );
+
+
+    if (
+        chosen < 1 ||
+        chosen > 9 ||
+        !chosen
+    ) {
+
+        alert(
+            "Please choose a number from 1 to 9."
+        );
+
+        return;
+
+    }
+
+
+    const luckyNumber =
+        Math.floor(
+            Math.random() * 9
+        ) + 1;
+
+
+    document
+        .getElementById(
+            "numberDisplay"
+        )
+        .innerText =
+            luckyNumber;
+
+
+    document
+        .getElementById(
+            "numberResult"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+
+    if (
+        chosen ===
+        luckyNumber
+    ) {
+
+        document
+            .getElementById(
+                "numberResultText"
+            )
+            .innerText =
+                "🎉 You matched the lucky number!";
+
+    } else {
+
+        document
+            .getElementById(
+                "numberResultText"
+            )
+            .innerText =
+                `Your number was ${chosen}. The lucky number was ${luckyNumber}.`;
+
+    }
+
+}
+
+
+/* ================================================= */
+/* MYSTERY BOX */
+/* ================================================= */
+
+function openBox(box) {
+
+    const boxes =
+        document.querySelectorAll(
+            "#boxGame .lucky-card"
+        );
+
+
+    boxes.forEach(
+        function(item) {
+
+            item.style.pointerEvents =
+                "none";
+
+        }
+    );
+
+
+    const results = [
+
+        "🎉 Amazing surprise!",
+
+        "⭐ You found a star!",
+
+        "🍀 Lucky box!"
+
+    ];
+
+
+    const result =
+        results[
+            Math.floor(
+                Math.random() *
+                results.length
+            )
+        ];
+
+
+    box.classList.add(
+        "card-revealed"
+    );
+
+
+    box.innerText =
+        "✨";
+
+
+    document
+        .getElementById(
+            "boxResult"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "boxResultText"
+        )
+        .innerText =
+            `${result} Well played, ${player.name}!`;
+
+}
+
+</script>
+
+</body>
+</html>

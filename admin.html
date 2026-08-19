@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Play & Win — Admin Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+    .map-button {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    background: #198754;
+    color: white;
+}
+
+.map-button:hover {
+    opacity: 0.85;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #1d2b5c,
+            #080b18 55%
+        );
+
+    color: white;
+
+    min-height: 100vh;
+
+}
+
+.hidden {
+    display: none !important;
+}
+
+.container {
+
+    width: 94%;
+
+    max-width: 1250px;
+
+    margin: auto;
+
+}
+
+/* HEADER */
+
+header {
+
+    padding: 24px 0;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+.logo {
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+}
+
+.logo span {
+
+    color: #ffd43b;
+
+}
+
+.admin-badge {
+
+    padding: 8px 14px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,212,59,.12);
+
+    color: #ffd43b;
+
+    border:
+        1px solid rgba(255,212,59,.25);
+
+    font-size: 13px;
+
+}
+
+/* CARD */
+
+.card {
+
+    background:
+        rgba(255,255,255,.07);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    border-radius: 22px;
+
+    padding: 28px;
+
+    margin-top: 25px;
+
+    backdrop-filter:
+        blur(15px);
+
+}
+
+/* LOGIN */
+
+.login {
+
+    max-width: 440px;
+
+    margin:
+        80px auto;
+
+}
+
+.login h1 {
+
+    font-size: 30px;
+
+    margin-bottom: 8px;
+
+}
+
+.subtitle {
+
+    color: #aeb7d5;
+
+    line-height: 1.6;
+
+    font-size: 14px;
+
+    margin-bottom: 25px;
+
+}
+
+label {
+
+    display: block;
+
+    font-size: 14px;
+
+    margin-bottom: 7px;
+
+}
+
+input {
+
+    width: 100%;
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    border:
+        1px solid #303958;
+
+    background:
+        #080b18;
+
+    color: white;
+
+    outline: none;
+
+    font-size: 15px;
+
+    margin-bottom: 17px;
+
+}
+
+input:focus {
+
+    border-color:
+        #ffd43b;
+
+}
+
+button {
+
+    border: 0;
+
+    border-radius: 12px;
+
+    padding: 14px 20px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+}
+
+.login-btn {
+
+    width: 100%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffd43b,
+            #ff9800
+        );
+
+    color: #16120a;
+
+}
+
+.message {
+
+    margin-top: 15px;
+
+    color: #ff6b6b;
+
+    font-size: 13px;
+
+}
+
+/* DASHBOARD */
+
+.dashboard-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+
+}
+
+.dashboard-header h1 {
+
+    margin: 0;
+
+}
+
+.logout {
+
+    background:
+        #252c48;
+
+    color: white;
+
+}
+
+.refresh {
+
+    background:
+        #287cff;
+
+    color: white;
+
+    margin-right: 8px;
+
+}
+
+/* STATISTICS */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(200px,1fr)
+        );
+
+    gap: 18px;
+
+    margin-top: 25px;
+
+}
+
+.stat {
+
+    padding: 22px;
+
+    border-radius: 18px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+}
+
+.stat-title {
+
+    color: #9da6c7;
+
+    font-size: 13px;
+
+}
+
+.stat-number {
+
+    font-size: 32px;
+
+    font-weight: 900;
+
+    color: #ffd43b;
+
+    margin-top: 8px;
+
+}
+
+/* TABLE */
+
+.table-wrapper {
+
+    overflow-x: auto;
+
+    margin-top: 20px;
+
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 950px;
+
+}
+
+th {
+
+    text-align: left;
+
+    color: #ffd43b;
+
+    padding: 14px;
+
+    border-bottom:
+        1px solid #29304b;
+
+    font-size: 13px;
+
+}
+
+td {
+
+    padding: 14px;
+
+    border-bottom:
+        1px solid #202640;
+
+    font-size: 13px;
+
+    color: #d9def0;
+
+}
+
+.coordinates {
+
+    font-family:
+        monospace;
+
+    color:
+        #8fc4ff;
+
+}
+
+.map-link {
+
+    display: inline-block;
+
+    padding: 7px 10px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(45,124,255,.15);
+
+    color:
+        #72b2ff;
+
+    text-decoration: none;
+
+}
+
+.granted {
+
+    color:
+        #51cf66;
+
+    font-weight:
+        bold;
+
+}
+
+/* MOBILE */
+
+@media(max-width:700px) {
+
+    .card {
+
+        padding: 20px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<header>
+
+    <div class="logo">
+
+        PLAY<span>&</span>WIN
+
+    </div>
+
+
+    <div class="admin-badge">
+
+        🔐 PRIVATE ADMIN
+
+    </div>
+
+</header>
+
+
+<!-- ============================= -->
+<!-- LOGIN -->
+<!-- ============================= -->
+
+<div
+    id="loginBox"
+    class="card login"
+>
+
+    <h1>
+        🔐 Admin Login
+    </h1>
+
+    <p class="subtitle">
+
+        This area is restricted to
+        authorized Play & Win administrators.
+
+    </p>
+
+
+    <label>
+        Admin Email
+    </label>
+
+    <input
+        id="email"
+        type="email"
+        placeholder="Enter admin email"
+    >
+
+
+    <label>
+        Password
+    </label>
+
+    <input
+        id="password"
+        type="password"
+        placeholder="Enter password"
+    >
+
+
+    <button
+        class="login-btn"
+        onclick="login()"
+    >
+        LOGIN
+    </button>
+
+
+    <div
+        id="loginMessage"
+        class="message"
+    ></div>
+
+</div>
+
+
+<!-- ============================= -->
+<!-- DASHBOARD -->
+<!-- ============================= -->
+
+<div
+    id="dashboard"
+    class="hidden"
+>
+
+
+    <div class="card">
+
+        <div class="dashboard-header">
+
+            <div>
+
+                <h1>
+                    📊 Player Dashboard
+                </h1>
+
+                <p class="subtitle">
+                    Verified player submissions
+                    with location permission.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <button
+                    class="refresh"
+                    onclick="loadPlayers()"
+                >
+                    🔄 REFRESH
+                </button>
+
+
+                <button
+                    class="logout"
+                    onclick="logout()"
+                >
+                    LOGOUT
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Total Players
+                </div>
+
+                <div
+                    id="totalPlayers"
+                    class="stat-number"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    18+ Players
+                </div>
+
+                <div
+                    id="adultPlayers"
+                    class="stat-number"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-title">
+                    Locations Granted
+                </div>
+
+                <div
+                    id="locationPlayers"
+                    class="stat-number"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- PLAYER TABLE -->
+
+    <div class="card">
+
+        <h2>
+            👥 Player Records
+        </h2>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Age
+                        </th>
+
+                        <th>
+                            Location
+                        </th>
+
+                        <th>
+                            Latitude
+                        </th>
+
+                        <th>
+                            Longitude
+                        </th>
+
+                        <th>
+                            Accuracy
+                        </th>
+
+                        <th>
+                            Permission
+                        </th>
+
+                        <th>
+                            Date / Time
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="playerTable"
+                ></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* ================================================= */
+/* SUPABASE CONFIG */
+/* ================================================= */
+
+const SUPABASE_URL =
+    "https://pdngpsmqkrcpizbxdypc.supabase.co/";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_eL8bYql00zA_N0EgGBeBeg_njP8Qzqj";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* ================================================= */
+/* LOGIN */
+/* ================================================= */
+
+async function login() {
+
+    const email =
+        document
+            .getElementById("email")
+            .value
+            .trim();
+
+
+    const password =
+        document
+            .getElementById("password")
+            .value;
+
+
+    const message =
+        document
+            .getElementById("loginMessage");
+
+
+    message.innerText = "";
+
+
+    if (!email || !password) {
+
+        message.innerText =
+            "Please enter email and password.";
+
+        return;
+
+    }
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .auth
+            .signInWithPassword({
+
+                email:
+                    email,
+
+                password:
+                    password
+
+            });
+
+
+    if (error) {
+
+        console.error(error);
+
+        message.innerText =
+            "❌ Invalid admin login.";
+
+        return;
+
+    }
+
+
+    await showDashboard();
+
+}
+
+
+/* ================================================= */
+/* SHOW DASHBOARD */
+/* ================================================= */
+
+async function showDashboard() {
+
+    const {
+        data
+    } =
+        await supabaseClient
+            .auth
+            .getUser();
+
+
+    if (!data.user) {
+
+        return;
+
+    }
+
+
+    /*
+       RLS on the database must determine
+       whether this authenticated user
+       is an authorized administrator.
+    */
+
+
+    document
+        .getElementById("loginBox")
+        .classList.add(
+            "hidden"
+        );
+
+
+    document
+        .getElementById("dashboard")
+        .classList.remove(
+            "hidden"
+        );
+
+
+    await loadPlayers();
+
+}
+
+
+/* ================================================= */
+/* LOAD PLAYERS */
+/* ================================================= */
+
+async function loadPlayers() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("players")
+            .select(
+                "id,name,age,latitude,longitude,location_granted,created_at"
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to load player records."
+        );
+
+        return;
+
+    }
+
+
+    const table =
+        document.getElementById(
+            "playerTable"
+        );
+
+
+    table.innerHTML = "";
+
+
+    document
+        .getElementById(
+            "totalPlayers"
+        )
+        .innerText =
+            data.length;
+
+
+    document
+        .getElementById(
+            "adultPlayers"
+        )
+        .innerText =
+            data.filter(
+                player =>
+                    player.age >= 18
+            ).length;
+
+
+    document
+        .getElementById(
+            "locationPlayers"
+        )
+        .innerText =
+            data.filter(
+                player =>
+                    player.location_granted
+            ).length;
+
+
+    data.forEach(
+        function(player) {
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const date =
+                new Date(
+                    player.created_at
+                ).toLocaleString();
+
+
+            let mapLink = "—";
+
+
+            if (
+                player.latitude !== null &&
+                player.longitude !== null
+            ) {
+
+                const lat =
+                    Number(
+                        player.latitude
+                    );
+
+
+                const lng =
+                    Number(
+                        player.longitude
+                    );
+
+
+                mapLink = `
+
+                    <a
+                        class="map-link"
+                        href="https://www.google.com/maps?q=${lat},${lng}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        🗺️ View Map
+                    </a>
+
+                `;
+
+            }
+
+
+            row.innerHTML = `
+    <td>${escapeHtml(player.name)}</td>
+
+    <td>${player.age}</td>
+
+    <td>
+        ${player.latitude !== null
+            ? Number(player.latitude).toFixed(6)
+            : "N/A"}
+    </td>
+
+    <td>
+        ${player.longitude !== null
+            ? Number(player.longitude).toFixed(6)
+            : "N/A"}
+    </td>
+
+    <td>
+        ${player.accuracy !== null
+            ? `±${Number(player.accuracy).toFixed(0)} m`
+            : "N/A"}
+    </td>
+
+    <td>
+        ${
+            player.latitude !== null &&
+            player.longitude !== null
+
+            ? `
+                <a
+                    class="map-button"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://www.google.com/maps?q=${encodeURIComponent(
+                        player.latitude + "," + player.longitude
+                    )}"
+                >
+                    🗺️ View Location
+                </a>
+              `
+
+            : "Unavailable"
+        }
+    </td>
+`;
+
+
+            table.appendChild(row);
+
+        }
+    );
+
+}
+
+
+/* ================================================= */
+/* LOGOUT */
+/* ================================================= */
+
+async function logout() {
+
+    await supabaseClient
+        .auth
+        .signOut();
+
+
+    location.reload();
+
+}
+
+
+/* ================================================= */
+/* ESCAPE HTML */
+/* ================================================= */
+
+function escapeHtml(value) {
+
+    return String(value)
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+/* ================================================= */
+/* CHECK EXISTING LOGIN */
+/* ================================================= */
+
+supabaseClient
+    .auth
+    .getSession()
+    .then(
+        function(result) {
+
+            if (
+                result.data.session
+            ) {
+
+                showDashboard();
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
